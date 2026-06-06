@@ -11,6 +11,17 @@ services:
       MYSQL_PASSWORD: treasury_pass
     volumes:
       - mysql_data:/var/lib/mysql
-
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: treasury-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 volumes:
   mysql_data:
+  rabbitmq_data:

@@ -1,9 +1,8 @@
 package com.treasury.treasurytradeservice.service;
 
 import com.treasury.treasurytradeservice.exception.CancelTradeException;
-import com.treasury.treasurytradeservice.exception.GetTradesException;
-import com.treasury.treasurytradeservice.exception.TradeCreationException;
 import com.treasury.treasurytradeservice.exception.TradeNotFoundException;
+import com.treasury.treasurytradeservice.messaging.TradeEventProducer;
 import com.treasury.treasurytradeservice.model.dto.CreateTradeRequest;
 import com.treasury.treasurytradeservice.model.dto.TradeResponse;
 import com.treasury.treasurytradeservice.model.entities.Trade;
@@ -21,6 +20,7 @@ import java.util.List;
 public class TradeService {
 
   private final TradeRepository tradeRepository;
+  private final TradeEventProducer tradeEventProducer;
 
   public TradeResponse createTrade(@Valid CreateTradeRequest createTradeRequest) {
     Trade trade = Trade.builder()
@@ -36,6 +36,8 @@ public class TradeService {
         .build();
 
     Trade createdTrade = tradeRepository.save(trade);
+
+    tradeEventProducer.publishTradeCreated(createdTrade);  // add this
 
     return mapToResponse(createdTrade);
   }
